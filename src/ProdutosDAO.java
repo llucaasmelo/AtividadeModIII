@@ -1,9 +1,12 @@
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
 
 public class ProdutosDAO {
     
@@ -34,12 +37,39 @@ public class ProdutosDAO {
                 }
             }
         }
+         
     }
     
     public ArrayList<ProdutosDTO> listarProdutos() {
-        // Implemente a lógica para listar produtos
-   
+        
+        try {
+             conn = new conectaDAO().connectDB();
+            prep = conn.prepareStatement("SELECT * FROM produto");
+            resultset = prep.executeQuery();
+            
+            while (resultset.next()) {
+                ProdutosDTO product = new ProdutosDTO();
+                
+                product.setId(resultset.getInt("id"));
+                product.setNome(resultset.getString("nome"));
+                product.setValor(resultset.getInt("valor"));
+                product.setStatus(resultset.getString("status"));
+                listagem.add(product);
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao consultar produto: " + ex);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao fechar conexão: " + ex);
+                }
+            }
+        }
+
         return listagem;
     }
+
 }
 
