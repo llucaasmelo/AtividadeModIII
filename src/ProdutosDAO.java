@@ -71,6 +71,55 @@ public class ProdutosDAO {
         return listagem;
     }
     
+    public void venderProduto(ProdutosDTO produto) {
+        try {
+            conn = conexao.connectDB();
+            String sql= ("update produto set status = 'Vendido' where id = ?");
+            prep = conn.prepareStatement(sql);
+            prep.setInt(1, produto.getId());
+            prep.execute();
+            
+    } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao cadastrar produto: " + ex);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao fechar conexão: " + ex);
+                }
+            }
+        }
 
+}
+    public ArrayList<ProdutosDTO> listarProdutosVendidos () {
+          try {
+            conn = new conectaDAO().connectDB();
+            prep = conn.prepareStatement("SELECT * FROM produto where status = 'Vendido'");
+            resultset = prep.executeQuery();
+            
+            while (resultset.next()) {
+                ProdutosDTO product = new ProdutosDTO();
+                
+                product.setId(resultset.getInt("id"));
+                product.setNome(resultset.getString("nome"));
+                product.setValor(resultset.getInt("valor"));
+                product.setStatus(resultset.getString("status"));
+                listagem.add(product);
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao consultar produto: " + ex);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao fechar conexão: " + ex);
+                }
+            }
+        }
+
+        return listagem;
+}
 }
 
